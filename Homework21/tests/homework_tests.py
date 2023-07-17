@@ -1,6 +1,3 @@
-import random
-import string
-import time
 import pytest
 from selenium import webdriver
 from pages.home_page import Homepage
@@ -13,33 +10,22 @@ def browser():
     return browser
 
 
-def random_char(char_num):
-    return ''.join(random.choice(string.ascii_lowercase) for _ in range(char_num))
-
-
-def test_number_1(browser):
+def test1_profile_creation(browser):
     home_page = Homepage(browser)
     home_page.open()
     profile_action = ProfileActions(browser)
-    profile_action.profile_create(browser)
-    time.sleep(3)
-    profile_action.profile_name_check(browser)
+    profile_action.create_profile(browser, "Vasyl", "Holobordko")
+    profile_action.assert_profile_name(browser, "Vasyl Holobordko")
     profile_action.go_to_garage(browser)
-    profile_action.create_car(browser)
-    time.sleep(3)
-    profile_action.add_expense(browser)
+    profile_action.create_cars(browser, 1, 1)
+    profile_action.add_expense(browser, 15, 13, 17)
     profile_action.delete_profile(browser)
 
 
-
-def test_number_2(browser):
+def test2_guest_check_max_cap(browser):
     home_page = Homepage(browser)
     home_page.open()
     profile_action = ProfileActions(browser)
-    profile_action.guest_log_in(browser)
-    for _ in range(5):
-        profile_action.create_car(browser)
-        time.sleep(1)
-    profile_action.check_max_cap(browser)
-    time.sleep(3)
-
+    profile_action.log_in_guest(browser)
+    profile_action.create_cars(browser, 5, 2)
+    profile_action.check_max_cap_guest(browser, 3)
